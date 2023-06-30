@@ -1,0 +1,23 @@
+--- a/CMakeLists.txt	2023-06-29 11:12:46.633643816 +0200
++++ b/CMakeLists.txt	2023-06-29 11:16:58.381346014 +0200
+@@ -609,12 +609,14 @@
+ endif()
+ 
+ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+-    find_package(bash-completion QUIET)
+-    if(NOT BASH_COMPLETION_FOUND)
+-        set(BASH_COMPLETION_COMPLETIONSDIR "${CONF_INST_DIR}/bash_completion.d")
+-        if(LINUX_DISTRIBUTION_IS_GENTOO)
+-            set(BASH_COMPLETION_COMPLETIONSDIR "/usr/share/bash-completion")
+-        endif()
++    if(NOT DEFINED BASH_COMPLETION_COMPLETIONSDIR)
++        find_package(bash-completion QUIET)
++        if((NOT BASH_COMPLETION_FOUND) OR (NOT BASH_COMPLETION_PREFIX STREQUAL CMAKE_INSTALL_PREFIX))
++            set(BASH_COMPLETION_COMPLETIONSDIR "${CONF_INST_DIR}/bash_completion.d")
++            if(LINUX_DISTRIBUTION_IS_GENTOO AND CMAKE_INSTALL_PREFIX STREQUAL "/usr")
++                set(BASH_COMPLETION_COMPLETIONSDIR "/usr/share/bash-completion")
++            endif()
++	endif()
+     endif()
+     install(DIRECTORY bash_completion.d/ DESTINATION ${BASH_COMPLETION_COMPLETIONSDIR})
+ endif()

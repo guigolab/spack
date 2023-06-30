@@ -21,15 +21,20 @@ class LdcBootstrap(CMakePackage):
     homepage = "https://dlang.org/"
     url = "https://github.com/ldc-developers/ldc/releases/download/v0.17.4/ldc-0.17.4-src.tar.gz"
 
+    generator("ninja")
+
     # This is the last version that does not require a D compiler to bootstrap
+    version("0.17.6", sha256="868b8c07ab697306ea65f0006fc2b6b96db4df226e82f8f11cafbed6fa9ac561")
     version("0.17.4", sha256="48428afde380415640f3db4e38529345f3c8485b1913717995547f907534c1c3")
 
-    depends_on("llvm@3.7:")
+    depends_on("llvm@7")
     depends_on("zlib")
     depends_on("libconfig")
     depends_on("curl")
     depends_on("libedit")
     depends_on("binutils")
+
+    patch("cmake-completion.patch", when="@0.17.6")
 
     def setup_dependent_build_environment(self, env, dep_spec):
         # The code below relies on this function being executed after the
@@ -40,4 +45,7 @@ class LdcBootstrap(CMakePackage):
         env.prepend_path("LD_LIBRARY_PATH", self.prefix.lib)
 
     def cmake_args(self):
-        return ["-DBUILD_SHARED_LIBS:BOOL=ON"]
+        return [ 
+            "-DBUILD_SHARED_LIBS:BOOL=ON",
+            "-DBASH_COMPLETION_COMPLETIONSDIR={}/share/bash-completion".format(self.prefix),
+        ]
