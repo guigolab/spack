@@ -19,11 +19,14 @@ class Ldc(CMakePackage):
     homepage = "https://dlang.org/"
     url = "https://github.com/ldc-developers/ldc/releases/download/v1.3.0/ldc-1.3.0-src.tar.gz"
 
+    version("1.29.0", sha256="d0c066eb965467625d9c5e75c00c583451b9ffa363601f9e37275ca8a8aea140")
     version("1.3.0", sha256="efe31a639bcb44e1f5b752da21713376d9410a01279fecc8aab8572065a3050b")
 
     variant("shared", default=True, description="Build runtime and tooling as shared libs")
 
-    depends_on("llvm@3.9:")
+    generator('ninja')
+
+    depends_on("llvm@7")
     depends_on("zlib")
     depends_on("libconfig")
     depends_on("curl")
